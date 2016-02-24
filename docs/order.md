@@ -29,7 +29,7 @@
      }
     }
 
-## orderInfo
+## orderInfo 获取订单详情
 ### Request
     POST 1.1/functions/orderInfo HTTP/1.1
     Payload
