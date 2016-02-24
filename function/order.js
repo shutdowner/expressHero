@@ -24,7 +24,7 @@ AV.Cloud.define('orderList', function (request, responese) {
         carrierStatus = true;
     }
 
-    AV.User.become(sessionToken).then(function (user) {
+    AV.User.become(sessionToken).then(function () {
         var query = new AV.Query(School);
         query.get(schoolid).then(function (school) {
             return school;
@@ -45,7 +45,7 @@ AV.Cloud.define('orderList', function (request, responese) {
         }).then(function (orderQuery) {
             return orderQuery.find();
         }).then(function (orders) {
-            var results = new Array();
+            var results = [];
             for (var i = 0; i < orders.length; i++) {
                 var object = orders[i];
                 results.push({
@@ -72,8 +72,7 @@ AV.Cloud.define('orderList', function (request, responese) {
 AV.Cloud.define('orderInfo', function (request, responese) {
     var sessionToken = request.params.sessionToken;
     var orderID = request.params.orderID;
-    AV.User.become(sessionToken).then(function (user) {
-        var order = new Order();
+    AV.User.become(sessionToken).then(function () {
         var query = new AV.Query(Order);
         query.get(orderID).then(function (order) {
             var expressCarrier = order.get("expressCarrier");
@@ -180,7 +179,6 @@ AV.Cloud.define('orderCarrier', function (request, responese) {
     var orderID = request.params.orderID;
 
     AV.User.become(sessionToken).then(function (user) {
-        var order = new Order();
         var query = new AV.Query(Order);
         query.get(orderID).then(function (order) {
             order.set("expressCarrier", user);
@@ -205,7 +203,6 @@ AV.Cloud.define('orderComplete', function (request, responese) {
     var orderID = request.params.orderID;
 
     AV.User.become(sessionToken).then(function (user) {
-        var order = new Order();
         var query = new AV.Query(Order);
 
         query.equalTo("publisher", user);
