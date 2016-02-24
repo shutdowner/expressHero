@@ -5,6 +5,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var test = require('./function/test');
 var users = require('./function/user');
 var ordesr = require('./function/order');
 
@@ -16,6 +17,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 // 加载云代码方法
+app.use(test);
 app.use(users);
 app.use(ordesr);
 
