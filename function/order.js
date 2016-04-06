@@ -23,48 +23,46 @@ AV.Cloud.define('orderList', function (request, responese) {
         orderStatus = false;
         carrierStatus = true;
     }
-
     AV.User.become(sessionToken).then(function () {
         var query = new AV.Query(School);
-        query.get(schoolid).then(function (school) {
-            return school;
-        }).then(function (school) {
-            var orderQuery = new AV.Query(Order);
-            var yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            orderQuery.addAscending('expressTime');
-            orderQuery.equalTo("school", school);
-            orderQuery.greaterThan("expressTime", yesterday);
-            orderQuery.equalTo("orderStatus", orderStatus);
-            if (carrierStatus) {
-                orderQuery.notEqualTo("expressCarrierID", null)
-            } else {
-                orderQuery.equalTo("expressCarrierID", null)
-            }
-            return orderQuery;
-        }).then(function (orderQuery) {
-            return orderQuery.find();
-        }).then(function (orders) {
-            var results = [];
-            for (var i = 0; i < orders.length; i++) {
-                var object = orders[i];
-                results.push({
-                    "orderid": object.id,
-                    "time": object.get("expressTime"),
-                    "com": object.get("expressCompany"),
-                    "reward": object.get("orderScore")
-                });
-            }
-            return results;
-        }).then(function (result) {
-            responese.success(result);
-        })
-    }, function (error) {
-        responese.error({
-            "statusCode": 200,
-            "code": error.code,
-            "message": error.message
-        });
+        var school = new School();
+        school.id = schoolid;
+        var orderQuery = new AV.Query(Order);
+        var yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        orderQuery.addAscending('expressTime');
+        orderQuery.equalTo("school", school);
+        orderQuery.greaterThan("expressTime", yesterday);
+        orderQuery.equalTo("orderStatus", orderStatus);
+        if (carrierStatus) {
+            orderQuery.notEqualTo("expressCarrier", null);
+        } else {
+            orderQuery.equalTo("expressCarrier", null)
+        }
+        return orderQuery;
+    }).then(function (orderQuery) {
+        return orderQuery.find();
+    }).then(function (orders) {
+        var results = [];
+        for (var i = 0; i < orders.length; i++) {
+            var object = orders[i];
+            results.push({
+                "orderid": object.id,
+                "time": object.get("expressTime"),
+                "com": object.get("expressCompany"),
+                "reward": object.get("orderScore")
+            });
+        }
+        return results;
+    }).then(function (result) {
+        console.log("done");
+        responese.success(result);
+    })
+}, function (error) {
+    responese.error({
+        "statusCode": 200,
+        "code": error.code,
+        "message": error.message
     });
 });
 
